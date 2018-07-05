@@ -2,14 +2,17 @@ package main;
 
 import java.util.ArrayList;
 
+import model.Deonica;
 import model.Korisnik;
 
 public class Aplikacija {
 	public static Aplikacija instance = null;
 	public ArrayList<Korisnik> listaKorisnika;
+	public ArrayList<Deonica> listaDeonica;
 	
 	private Aplikacija () {
 		listaKorisnika = new ArrayList<Korisnik>();
+		listaDeonica = new ArrayList<Deonica>();
 	}
 	
 	public static Aplikacija getInstance() {
@@ -29,5 +32,9 @@ public class Aplikacija {
 	
 	public void obrisiKorisnika(Korisnik k) {
 		//TODO: Implement
+	}
+	
+	public void dodajDeonicu(Deonica d) {
+		listaDeonica.add(d);
 	}
 }
