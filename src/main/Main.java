@@ -1,6 +1,7 @@
 package main;
 
 import model.Deonica;
+import model.NaplatnaStanica;
 import utility.Utility;
 
 public class Main {
@@ -15,6 +16,9 @@ public class Main {
 			Utility.ucitajDeonice();
 			for(Deonica d: Aplikacija.getInstance().listaDeonica) {
 				System.out.println(d);
+			}
+			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+				System.out.println(ns);
 			}
 		}
 	}
