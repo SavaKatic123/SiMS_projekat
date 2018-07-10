@@ -4,15 +4,18 @@ import java.util.ArrayList;
 
 import model.Deonica;
 import model.Korisnik;
+import model.NaplatnaStanica;
 
 public class Aplikacija {
 	public static Aplikacija instance = null;
 	public ArrayList<Korisnik> listaKorisnika;
 	public ArrayList<Deonica> listaDeonica;
+	public ArrayList<NaplatnaStanica> listaNaplatnihStanica;
 	
 	private Aplikacija () {
 		listaKorisnika = new ArrayList<Korisnik>();
 		listaDeonica = new ArrayList<Deonica>();
+		listaNaplatnihStanica = new ArrayList<NaplatnaStanica>();
 	}
 	
 	public static Aplikacija getInstance() {
@@ -22,12 +25,21 @@ public class Aplikacija {
 		return instance;
 	}
 	
-	public void dodajKorisnika(Korisnik k) {
-		listaKorisnika.add(k);
+	public void dodajKorisnika(Korisnik korisnik) {
+		boolean pronadjen = false;
+		for(Korisnik k: listaKorisnika) {
+			if (k.equals(korisnik)) {
+				pronadjen = true;
+			}
+		}
+		if (!pronadjen) {
+			listaKorisnika.add(korisnik);
+		}
 	}
 	
 	public void izmeniKorisnika(Korisnik k) {
 		//TODO: Implement
+		
 	}
 	
 	public void obrisiKorisnika(Korisnik k) {
@@ -35,6 +47,26 @@ public class Aplikacija {
 	}
 	
 	public void dodajDeonicu(Deonica d) {
-		listaDeonica.add(d);
+		boolean pronadjen = false;
+		for (Deonica deonica: listaDeonica) {
+			if (deonica.equals(d)) {
+				pronadjen = true;
+			}
+		}
+		if (!pronadjen) {
+			listaDeonica.add(d);			
+		}
+	}
+	
+	public void dodajNaplatnuStanicu(NaplatnaStanica ns) {
+		boolean pronadjen = false;
+		for (NaplatnaStanica naplatnaStanica: listaNaplatnihStanica) {
+			if (naplatnaStanica.getNazivStanice().equals(ns.getNazivStanice())) {
+				pronadjen = true;
+			}
+		}
+		if (!pronadjen) {
+			listaNaplatnihStanica.add(ns);			
+		}
 	}
 }

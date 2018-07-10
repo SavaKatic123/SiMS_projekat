@@ -17,7 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import utility.Login;
+import utility.Utility;
  
 public class LoginDialog extends JDialog {
  
@@ -66,7 +66,7 @@ public class LoginDialog extends JDialog {
  
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Login.proveriKorisnika(getUsername(), getPassword())) {
+                if (Utility.proveriKorisnika(getUsername(), getPassword())) {
                     JOptionPane.showMessageDialog(LoginDialog.this,
                             "Zdravo " + getUsername() + "! Uspesno ste se logovali.",
                             "Login",

@@ -1,27 +1,21 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
-import enumTypes.VrstaKorisnika;
-import model.Korisnik;
 import model.Deonica;
-import utility.Login;
-import utility.UcitavanjeDeonica;
+import utility.Utility;
 
 public class Main {
 
 	public static void main(String[] args) {
 		Aplikacija.getInstance();
 		
-		Login.citajIzFajla();
-		boolean uspesno = Login.logIn();
+		Utility.ucitajKorisnike();
+		boolean uspesno = Utility.logIn();
 		
 		if (uspesno) {
-			UcitavanjeDeonica.ucitajDeonice();
-			
+			Utility.ucitajDeonice();
+			for(Deonica d: Aplikacija.getInstance().listaDeonica) {
+				System.out.println(d);
+			}
 		}
 	}
 
