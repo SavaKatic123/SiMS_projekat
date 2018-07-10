@@ -1,8 +1,11 @@
 package model;
 
+import java.io.Serializable;
+
 import enumTypes.VrstaVozila;
 
-public class Cena {
+@SuppressWarnings("serial")
+public class Cena implements Serializable {
 	private VrstaVozila vrstaVozila;
 	private double cenaEUR;
 	private double cenaRSD;

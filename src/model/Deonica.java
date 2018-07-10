@@ -1,6 +1,9 @@
 package model;
 
-public class Deonica {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Deonica implements Serializable {
 	private NaplatnaStanica polaznaNS;
 	private NaplatnaStanica odredisnaNS;
 	private Cenovnik cenovnik;
@@ -73,5 +76,7 @@ public class Deonica {
 		}
 		return false;
 	}
+	
+	
 	
 }

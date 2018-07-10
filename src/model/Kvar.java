@@ -1,10 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import enumTypes.VrstaKvara;
 
-public class Kvar {
+@SuppressWarnings("serial")
+public class Kvar implements Serializable {
 	private VrstaKvara vrstaKvara;
 	private String opis;
 	private Date datum;

@@ -1,12 +1,14 @@
 package utility;
 
-import enumTypes.VrstaKorisnika;
-import gui.LoginDialog;
-
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +23,9 @@ import model.Cenovnik;
 import model.Deonica;
 import model.Korisnik;
 import model.NaplatnaStanica;
+import model.NaplatnoMesto;
+import enumTypes.VrstaKorisnika;
+import gui.LoginDialog;
 
 public class Utility {
 	
@@ -75,7 +80,49 @@ public class Utility {
         return false;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static void ucitaj () {
+		try {
+			FileInputStream f3 = new FileInputStream(new File("deonice.txt"));
+			FileInputStream f4 = new FileInputStream(new File("naplatneStanice.txt"));
+			
+			ObjectInputStream o3 = new ObjectInputStream(f3);
+			ObjectInputStream o4 = new ObjectInputStream(f4);
+			
+			Aplikacija.getInstance().listaDeonica = (ArrayList<Deonica>)o3.readObject();
+			Aplikacija.getInstance().listaNaplatnihStanica = (ArrayList<NaplatnaStanica>)o4.readObject();
+			
+			o3.close();
+			o4.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+		} catch (IOException e) {
+			System.out.println("Error initializing stream");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public static void upisi () {
+		try {
+			FileOutputStream f1 = new FileOutputStream(new File("deonice.txt"));
+			FileOutputStream f2 = new FileOutputStream(new File("naplatneStanice.txt"));
+			ObjectOutputStream o1 = new ObjectOutputStream(f1);
+			ObjectOutputStream o2 = new ObjectOutputStream(f2);
+			
+			o1.writeObject(Aplikacija.getInstance().listaDeonica);
+			o2.writeObject(Aplikacija.getInstance().listaNaplatnihStanica);
+			o1.close();
+			o2.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+		} catch (IOException e) {
+			System.out.println("Error initializing stream");
+		}
+	}
+	
+	// HELPER METODE - OBRISATI IH NAKON STO VISE NE BUDU POTREBNE
 	public static void ucitajDeonice() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("cene_putarina.txt"));
@@ -102,6 +149,36 @@ public class Utility {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static void kreirajFajlove() {
+		try {
+			FileOutputStream f1 = new FileOutputStream(new File("deonice.txt"));
+			FileOutputStream f2 = new FileOutputStream(new File("naplatneStanice.txt"));
+			ObjectOutputStream o1 = new ObjectOutputStream(f1);
+			ObjectOutputStream o2 = new ObjectOutputStream(f2);
+			
+			o1.writeObject(Aplikacija.getInstance().listaDeonica);
+			o2.writeObject(Aplikacija.getInstance().listaNaplatnihStanica);
+			
+			FileInputStream f3 = new FileInputStream(new File("deonice.txt"));
+			FileInputStream f4 = new FileInputStream(new File("naplatneStanice.txt"));
+			
+			ObjectInputStream o3 = new ObjectInputStream(f3);
+			ObjectInputStream o4 = new ObjectInputStream(f4);
+			
+
+			ArrayList<Deonica> list1 = (ArrayList<Deonica>)o3.readObject();
+			ArrayList<NaplatnaStanica> list2 = (ArrayList<NaplatnaStanica>)o4.readObject();
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+		} catch (IOException e) {
+			System.out.println("Error initializing stream");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

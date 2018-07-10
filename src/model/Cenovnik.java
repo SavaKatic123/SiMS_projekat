@@ -1,9 +1,11 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Cenovnik {
+@SuppressWarnings("serial")
+public class Cenovnik implements Serializable {
 	private Date rokVazenja;
 	private ArrayList<Cena> listaCena = new ArrayList<Cena>();
 	public Date getRokVazenja() {
