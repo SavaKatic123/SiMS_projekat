@@ -17,6 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import model.Korisnik;
 import utility.Utility;
  
 public class LoginDialog extends JDialog {
@@ -28,6 +29,7 @@ public class LoginDialog extends JDialog {
     private JButton btnLogin;
     private JButton btnCancel;
     private boolean succeeded;
+    private Korisnik k;
  
     public LoginDialog(Frame parent) {
         super(parent, "Login", true);
@@ -66,7 +68,8 @@ public class LoginDialog extends JDialog {
  
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Utility.proveriKorisnika(getUsername(), getPassword())) {
+            	setKorisnik(Utility.proveriKorisnika(getUsername(), getPassword()));
+                if (getKorisnik() != null) {
                     JOptionPane.showMessageDialog(LoginDialog.this,
                             "Zdravo " + getUsername() + "! Uspesno ste se logovali.",
                             "Login",
@@ -114,4 +117,13 @@ public class LoginDialog extends JDialog {
     public boolean isSucceeded() {
         return succeeded;
     }
+
+	public Korisnik getKorisnik() {
+		return k;
+	}
+
+	public void setKorisnik(Korisnik k) {
+		this.k = k;
+	}
+    
 }

@@ -3,7 +3,8 @@ package enumTypes;
 public enum VrstaKorisnika {
 	Administrator,
 	Operater,
-	SefNaplatneStanice;
+	SefNaplatneStanice,
+	ZaposleniUCentrali;
 	
 	public static VrstaKorisnika fromInteger(int x) {
         switch(x) {
@@ -13,6 +14,8 @@ public enum VrstaKorisnika {
             return Operater;
         case 2:
         	return SefNaplatneStanice;
+        case 3:
+        	return ZaposleniUCentrali;
         }
         return null;
     }
@@ -25,6 +28,8 @@ public enum VrstaKorisnika {
 			return Operater;
 		case "SefNaplatneStanice":
 			return SefNaplatneStanice;
+		case "ZaposleniUCentrali":
+			return ZaposleniUCentrali;
 		}
 		return null;
 	}

@@ -43,7 +43,7 @@ public class Utility {
 				Korisnik k = new Korisnik();
 				k.setKorisnickoIme(lista[0]);
 				k.setLozinka(lista[1]);
-				int index = Integer.parseInt(lista[1]);
+				int index = Integer.parseInt(lista[2]);
 				k.setVrsta(VrstaKorisnika.fromInteger(index));
 				Aplikacija.getInstance().dodajKorisnika(k);
 			}
@@ -57,16 +57,16 @@ public class Utility {
 		}
 	}
 	
-	public static boolean proveriKorisnika(String korisnickoIme, String lozinka) {
+	public static Korisnik proveriKorisnika(String korisnickoIme, String lozinka) {
 		for (Korisnik k: Aplikacija.getInstance().listaKorisnika) {
 			if (korisnickoIme.equals(k.getKorisnickoIme()) && lozinka.equals(k.getLozinka())) {
-				return true;
+				return k;
 			}
 		}
-		return false;
+		return null;
 	}
 	
-	public static boolean logIn() {
+	public static Korisnik logIn() {
 		final JFrame frame = new JFrame("Login");
         final JButton btnLogin = new JButton();
  
@@ -75,9 +75,9 @@ public class Utility {
 
         if(loginDlg.isSucceeded()){
             btnLogin.setText("Zdravo " + loginDlg.getUsername() + "!");
-            return true;
+            return loginDlg.getKorisnik();
         }
-        return false;
+        return null;
 	}
 	
 	@SuppressWarnings("unchecked")

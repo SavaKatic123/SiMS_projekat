@@ -1,6 +1,7 @@
 package main;
 
-import model.Deonica;
+import gui.MainWindow;
+import model.Korisnik;
 import utility.Utility;
 
 public class Main {
@@ -9,10 +10,11 @@ public class Main {
 		Aplikacija.getInstance();
 		
 		Utility.ucitajKorisnike();
-		boolean uspesno = Utility.logIn();
+		Korisnik aktivan = Utility.logIn();
 		
-		if (uspesno) {
+		if (aktivan != null) {
 			Utility.ucitaj();
+			MainWindow w = new MainWindow("Menu", aktivan);
 		}
 	}
 
