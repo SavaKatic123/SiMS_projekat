@@ -35,11 +35,12 @@ public class LoginDialog extends JDialog {
     public LoginDialog(Frame parent) {
         super(parent, "Login", true);
         //
+        
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
- 
+        
         cs.fill = GridBagConstraints.HORIZONTAL;
- 
+        
         lbUsername = new JLabel("Username: ");
         cs.gridx = 0;
         cs.gridy = 0;
@@ -58,6 +59,7 @@ public class LoginDialog extends JDialog {
         cs.gridwidth = 1;
         panel.add(lbPassword, cs);
  
+        
         pfPassword = new JPasswordField(20);
         cs.gridx = 1;
         cs.gridy = 1;
