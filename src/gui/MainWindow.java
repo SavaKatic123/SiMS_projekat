@@ -8,15 +8,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import main.Main;
 import model.Korisnik;
 import model.Rampa;
-import states.RampaSpustena;
+import states.RampaSeDize;
 
 
 @SuppressWarnings("serial")
@@ -80,23 +82,21 @@ public class MainWindow extends JFrame {
 		
 		button.addActionListener (new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				final Rampa r = new Rampa();
-				r.getStanje().entry();
-				r.getStanje().execute();
-				r.getStanje().exit();
-				r.setStanje(r.getStanje().getSledeceStanje());
-				while (!r.getStanje().getClass().isInstance(new RampaSpustena())) {
-					
+
+		        boolean first = true;
+		        
+				while (true) {
 					r.getStanje().entry();
 					r.getStanje().execute();
 					r.getStanje().exit();
 					r.setStanje(r.getStanje().getSledeceStanje());
+					if (r.getStanje().getClass().isInstance(new RampaSeDize()) && !first) {
+						break;
+					}
+					first = false;
 				}
-				r.getStanje().entry();
-				r.getStanje().execute();
-				r.getStanje().exit();
-				r.setStanje(r.getStanje().getSledeceStanje());
+				JOptionPane.showMessageDialog(null, "Rampa spustena, vozac prosao.");
 				
 			}
 		});

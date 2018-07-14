@@ -15,7 +15,6 @@ public class RampaPodignuta extends StanjeRampe {
 	@Override
 	public void entry() {
 		// TODO Auto-generated method stub
-		System.out.println("Rampa podignuta.");
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
@@ -23,6 +22,7 @@ public class RampaPodignuta extends StanjeRampe {
 			e.printStackTrace();
 		}
 	}
+	
 
 	@Override
 	public void execute() {
@@ -33,7 +33,6 @@ public class RampaPodignuta extends StanjeRampe {
 	@Override
 	public void exit() {
 		// TODO Auto-generated method stub
-		System.out.println();
 	}
 
 }

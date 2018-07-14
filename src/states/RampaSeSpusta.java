@@ -1,5 +1,6 @@
 package states;
 
+
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("serial")
@@ -15,7 +16,6 @@ public class RampaSeSpusta extends StanjeRampe {
 	@Override
 	public void entry() {
 		// TODO Auto-generated method stub
-		System.out.println("Rampa pocinje da se spusta.");
 		try {
 			TimeUnit.SECONDS.sleep(1);
 		} catch (InterruptedException e) {
@@ -31,7 +31,6 @@ public class RampaSeSpusta extends StanjeRampe {
 		while (indikator > 0) {
 			
 			try {
-				System.out.println("Rampa se spusta...");
 				TimeUnit.SECONDS.sleep(1);
 				indikator--;
 			} catch (NumberFormatException e) {
@@ -47,7 +46,6 @@ public class RampaSeSpusta extends StanjeRampe {
 	@Override
 	public void exit() {
 		// TODO Auto-generated method stub
-		System.out.println();
 	}
-
+	
 }

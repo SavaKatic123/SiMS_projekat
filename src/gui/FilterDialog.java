@@ -78,6 +78,7 @@ public class FilterDialog extends JDialog {
                 	try {
     					setPeriod(sdf.parse(periodString));
     	            	success = true;
+    	            	dispose();
     				} catch (ParseException e1) {
     					success = false;
     					e1.printStackTrace();
@@ -103,6 +104,7 @@ public class FilterDialog extends JDialog {
                 public void actionPerformed(ActionEvent e) {
                 	setVrstaVozila(VrstaVozila.fromString((String) cbVrsta.getSelectedItem()));
                 	success = true;
+                	dispose();
                 }
             });
         	break;
