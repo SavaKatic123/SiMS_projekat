@@ -9,8 +9,8 @@ import java.util.Arrays;
 @SuppressWarnings("serial")
 public class NaplatnaStanica implements Serializable {
 	private String nazivStanice;
-	private ArrayList<NaplatnoMesto> listaNaplatnihMesta;
-	private ArrayList<Izvestaj> listaIzvestaja;
+	ArrayList<NaplatnoMesto> listaNaplatnihMesta;
+	public ArrayList<Izvestaj> listaIzvestaja;
 	
 	public String getNazivStanice() {
 		return nazivStanice;
@@ -25,13 +25,7 @@ public class NaplatnaStanica implements Serializable {
 	public void setListaNaplatnihMesta(ArrayList<NaplatnoMesto> listaNaplatnihMesta) {
 		this.listaNaplatnihMesta = listaNaplatnihMesta;
 	}
-	
-	public ArrayList<Izvestaj> getListaIzvestaja() {
-		return listaIzvestaja;
-	}
-	public void setListaIzvestaja(ArrayList<Izvestaj> listaIzvestaja) {
-		this.listaIzvestaja = listaIzvestaja;
-	}
+
 	public NaplatnaStanica(String nazivStanice) {
 		super();
 		this.nazivStanice = nazivStanice;

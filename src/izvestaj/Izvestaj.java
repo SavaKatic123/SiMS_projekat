@@ -1,52 +1,62 @@
 package izvestaj;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import main.Aplikacija;
+import model.NaplatnaStanica;
 import enumTypes.VrstaVozila;
 
 public class Izvestaj {
-	private VrstaVozila vrstaVozila;
 	private Date vreme;
-	private double placenIznos;
-	private int brojVozila;
-
-	public Izvestaj(VrstaVozila vrstaVozila, Date vreme, double placenIznos,
-			int brojVozila) {
-		super();
-		this.vrstaVozila = vrstaVozila;
-		this.vreme = vreme;
-		this.placenIznos = placenIznos;
-		this.brojVozila = brojVozila;
-	}
-	public VrstaVozila getVrstaVozila() {
-		return vrstaVozila;
-	}
-	public void setVrstaVozila(VrstaVozila vrstaVozila) {
-		this.vrstaVozila = vrstaVozila;
-	}
+	private ArrayList<IzvestajPoDatumu> poDatumu;
+		
 	public Date getVreme() {
 		return vreme;
 	}
+
 	public void setVreme(Date vreme) {
 		this.vreme = vreme;
 	}
-	public double getPlacenIznos() {
-		return placenIznos;
+	
+	
+
+	public ArrayList<IzvestajPoDatumu> getPoDatumu() {
+		return poDatumu;
 	}
-	public void setPlacenIznos(double placenIznos) {
-		this.placenIznos = placenIznos;
+
+	public void setPoDatumu(ArrayList<IzvestajPoDatumu> poDatumu) {
+		this.poDatumu = poDatumu;
 	}
-	public int getBrojVozila() {
-		return brojVozila;
+
+	public Izvestaj(Date vreme) {
+		super();
+		this.vreme = vreme;
+		for(int i = 0; i < 4; i++) {
+			IzvestajPoDatumu izp = new IzvestajPoDatumu(VrstaVozila.fromInteger(i), 0, 0);
+			this.poDatumu.add(izp);
+		}
 	}
-	public void setBrojVozila(int brojVozila) {
-		this.brojVozila = brojVozila;
-	}
-	@Override
-	public String toString() {
-		return "Izvestaj [vrstaVozila=" + vrstaVozila + ", vreme=" + vreme
-				+ ", placenIznos=" + placenIznos + ", brojVozila=" + brojVozila
-				+ "]";
+
+	public static void inicirajIzvestaj () {
+		Date now = new Date();
+		boolean postoji = false;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+			for(Izvestaj i: ns.listaIzvestaja) {
+				if (sdf.format(now).equals(sdf.format(i.getVreme()))) {
+					postoji = true;
+					break;
+				}
+			}
+		}
+		Izvestaj i = new Izvestaj(now);
+		if (!postoji) {
+			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+				ns.listaIzvestaja.add(i);
+			}
+		}
 	}
 	
 	

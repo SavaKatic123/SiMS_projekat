@@ -20,6 +20,7 @@ import javax.swing.border.LineBorder;
 import model.Korisnik;
 import utility.Utility;
  
+@SuppressWarnings("serial")
 public class LoginDialog extends JDialog {
  
     private JTextField tfUsername;

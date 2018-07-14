@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import model.Korisnik;
 
 
+@SuppressWarnings("serial")
 public class MainWindow extends JFrame {
 	public MainWindow(String title, Korisnik k) {
 		//TODO: Implement
