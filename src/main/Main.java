@@ -20,7 +20,8 @@ public class Main {
 		
 		if (aktivan != null) {
 			Utility.ucitaj();
-			MainWindow w = new MainWindow("Menu", aktivan);
+			
+			MainWindow w = new MainWindow(aktivan.getVrsta().toString(), aktivan);
 		}
 		else {
 			System.exit(0);

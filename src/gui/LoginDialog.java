@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -68,7 +70,14 @@ public class LoginDialog extends JDialog {
         panel.setBorder(new LineBorder(Color.GRAY));
  
         btnLogin = new JButton("Login");
- 
+        btnLogin.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    btnLogin.doClick();
+                }
+            }
+        });
+        
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	setKorisnik(Utility.proveriKorisnika(getUsername(), getPassword()));
