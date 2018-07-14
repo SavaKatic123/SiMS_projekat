@@ -1,11 +1,27 @@
 package states;
 
+import java.util.concurrent.TimeUnit;
+
 @SuppressWarnings("serial")
 public class RampaSpustena extends StanjeRampe {
 
 	@Override
+	public StanjeRampe getSledeceStanje() {
+		// TODO Auto-generated method stub
+		return new RampaSeDize();
+	}
+	
+	
+	@Override
 	public void entry() {
 		// TODO Auto-generated method stub
+		System.out.println("Rampa spustena.");
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -18,7 +34,7 @@ public class RampaSpustena extends StanjeRampe {
 	@Override
 	public void exit() {
 		// TODO Auto-generated method stub
-
+		System.out.println();
 	}
 
 }

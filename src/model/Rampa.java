@@ -8,6 +8,7 @@ import states.StanjeRampe;
 @SuppressWarnings("serial")
 public class Rampa implements Serializable {
 	private StanjeRampe stanje;
+	
 	public Rampa () {
 		this.stanje = new RampaSpustena();
 	}
@@ -17,5 +18,6 @@ public class Rampa implements Serializable {
 	public void setStanje(StanjeRampe stanje) {
 		this.stanje = stanje;
 	}
+	
 	
 }

@@ -10,14 +10,24 @@ public class Main {
 		Aplikacija.getInstance();
 		
 		Utility.ucitajKorisnike();
+		start();
+		
+		
+	}
+
+	public static void start() {
 		Korisnik aktivan = Utility.logIn();
 		
 		if (aktivan != null) {
 			Utility.ucitaj();
 			MainWindow w = new MainWindow("Menu", aktivan);
 		}
+		else {
+			System.exit(0);
+		}
+	
+		
 	}
-
 	
 }
 
