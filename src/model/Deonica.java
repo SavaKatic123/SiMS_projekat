@@ -26,6 +26,12 @@ public class Deonica implements Serializable {
 
 
 
+	public Deonica() {
+		super();
+	}
+
+
+
 	public NaplatnaStanica getPolaznaNS() {
 		return polaznaNS;
 	}

@@ -67,6 +67,11 @@ public class NaplatnaStanica implements Serializable {
 			}
 		}
 	}
+	public NaplatnaStanica() {
+		super();
+		listaNaplatnihMesta = new ArrayList<NaplatnoMesto>();
+		listaIzvestaja = new ArrayList<Izvestaj>();
+	}
 	@Override
 	public String toString() {
 		return "NaplatnaStanica [nazivStanice=" + nazivStanice + ", sef=" + sef
@@ -75,7 +80,9 @@ public class NaplatnaStanica implements Serializable {
 	}
 	
 	
-	
+	public void dodajNaplatnoMesto(NaplatnoMesto nm) {
+		listaNaplatnihMesta.add(nm);
+	}
 	
 	
 	

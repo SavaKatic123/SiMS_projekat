@@ -69,6 +69,16 @@ public class Aplikacija {
 		}
 	}
 	
+	public void obrisiDeonicu(Deonica d) {
+		for (int i = 0; i < listaDeonica.size(); i++) {
+			if (listaDeonica.get(i).getOdredisnaNS().getNazivStanice().equals(d.getOdredisnaNS().getNazivStanice()) && listaDeonica.get(i).getPolaznaNS().getNazivStanice().equals(d.getPolaznaNS().getNazivStanice())) {
+				listaDeonica.remove(i);
+			}
+		}
+	}
+	
+	
+	
 	public void dodajNaplatnuStanicu(NaplatnaStanica ns) {
 		boolean pronadjen = false;
 		for (NaplatnaStanica naplatnaStanica: listaNaplatnihStanica) {
