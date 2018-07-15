@@ -55,14 +55,15 @@ public class Izvestaj implements Serializable {
 			}
 			
 		}
-		Izvestaj izv = new Izvestaj(now);
-		for(int i = 0; i < 5; i++) {
-			IzvestajPoDatumu izp = new IzvestajPoDatumu(VrstaVozila.fromInteger(i), 0, 0);
-			izv.poDatumu.add(izp);
-		}
+		
 		if (!postoji) {
 			
 			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+				Izvestaj izv = new Izvestaj(now);
+				for(int i = 0; i < 5; i++) {
+					IzvestajPoDatumu izp = new IzvestajPoDatumu(VrstaVozila.fromInteger(i), 0, 0);
+					izv.poDatumu.add(izp);
+				}
 				if (ns.listaIzvestaja != null) {
 					ns.listaIzvestaja.add(izv);
 				}

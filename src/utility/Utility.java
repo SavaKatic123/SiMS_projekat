@@ -122,16 +122,19 @@ public class Utility {
 	}
 	
 	// HELPER METODE - OBRISATI IH NAKON STO VISE NE BUDU POTREBNE
-	public static void ucitajDeonice() {
+	public static void ucitajDeonice(Korisnik k) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("cene_putarina.txt"));
 			String red;
+			int idx = 1;
 			while((red = br.readLine()) != null) {
 				String[] lista = red.split("\\|");
-				NaplatnaStanica ns1 = new NaplatnaStanica(lista[0]);
-				NaplatnaStanica ns2 = new NaplatnaStanica(lista[1]);
 				
-				Deonica d = new Deonica(new NaplatnaStanica(lista[0]), new NaplatnaStanica(lista[1]), new Cenovnik(new Date(new Date().getTime() + 8*24*60*60*1000), 
+				NaplatnaStanica ns1 = new NaplatnaStanica(lista[0], idx, k);
+				idx += 4;
+				NaplatnaStanica ns2 = new NaplatnaStanica(lista[1], idx, k);
+				idx += 4;
+				Deonica d = new Deonica(ns1, ns2, new Cenovnik(new Date(new Date().getTime() + 8*24*60*60*1000), 
 						new ArrayList<Cena>(Arrays.asList(new Cena(0, Double.parseDouble(lista[2]), Double.parseDouble(lista[3])),
 						new Cena(1, Double.parseDouble(lista[4]), Double.parseDouble(lista[5])),
 						new Cena(2, Double.parseDouble(lista[6]), Double.parseDouble(lista[7])),

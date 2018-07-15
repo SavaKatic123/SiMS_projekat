@@ -97,21 +97,31 @@ public class MainWindow extends JFrame {
 		grupa.add(ENDugme);
 		grupa.add(x);
 		
-		prviPanel.add(ONDugme);
-		prviPanel.add(ENDugme);
+		NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForOperater();
+		if(nm != null && !nm.isAktivno()) {
+			JLabel labela = new JLabel("MESTO NEAKTIVNO");
+			labela.setFont(vrloKrupanFont);
+			prviPanel.add(labela);
+		} else {
+			prviPanel.add(ONDugme);
+			prviPanel.add(ENDugme);
+			prviPanel.add(x);
+		}
 		
 
 		x.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForUser();
+				NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForOperater();
 				if (nm != null) {
 					nm.setStanjeNaplate(new NeRadi());
 					nm.setAktivno(false);
+					Utility.upisi();
+					System.exit(0);
 				}
 				
 			}
 		});
-		prviPanel.add(x);
+		
 		
 		ActionListener ONAL = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -180,9 +190,8 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(button);
 				
-				final NaplatnaStanica naplatnaStanica = aktivanKorisnik.getNaplatnaStanicaForUser();
-				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForUser();
-				
+				final NaplatnaStanica naplatnaStanica = aktivanKorisnik.getNaplatnaStanicaForOperater();
+				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForOperater();
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if(!unosPolje.getText().trim().equals("") && !unosPoljeVrsta.getText().trim().equals("") && !unosPoljeCena.getText().trim().equals("")) {
@@ -203,8 +212,8 @@ public class MainWindow extends JFrame {
 							JOptionPane.showMessageDialog(null, "Rampa spustena, vozac prosao.");
 							Naplata naplata = new Naplata(unosPolje.getText(), Double.parseDouble(unosPoljeCena.getText().trim()), VrstaVozila.fromString(unosPoljeVrsta.getText().trim()));
 							naplatnoMesto.dodajNaplatu(naplata);
-							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm");
-							
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+							System.out.println(naplatnaStanica);
 							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
 								if(sdf.format(i.getVreme()).equals(sdf.format(new Date()))) {
 									for(IzvestajPoDatumu ipd: i.getPoDatumu()) {
@@ -218,7 +227,10 @@ public class MainWindow extends JFrame {
 							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
 								System.out.println(i);
 							}
-							Utility.upisi();
+							for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+								System.out.println(ns);
+							}
+							// Utility.upisi();
 						} else {
 							JOptionPane.showMessageDialog(null, "Potrebno popuniti sva obavezna polja!", "Error", JOptionPane.ERROR_MESSAGE);
 						}						
@@ -269,7 +281,7 @@ public class MainWindow extends JFrame {
 				cs.gridwidth = 2;
 				panel.add(unosPoljeVrsta);
 
-				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForUser();
+				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForOperater();
 				
 				JButton dugmeSkeniraj = new JButton("Skeniraj");
 				dugmeSkeniraj.setFont(krupanFont);
@@ -736,8 +748,8 @@ public class MainWindow extends JFrame {
 				panel.add(button);
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (aktivanKorisnik.getNaplatnaStanicaForUser() != null && aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja != null) {
-							final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja);
+						if (aktivanKorisnik.getNaplatnaStanicaForSef() != null && aktivanKorisnik.getNaplatnaStanicaForSef().listaIzvestaja != null) {
+							final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForSef().listaIzvestaja);
 							if(PoDatumuDugme.isSelected()) {
 								MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
 							}

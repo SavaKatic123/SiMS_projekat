@@ -70,7 +70,7 @@ public class Korisnik implements Serializable {
 		return false;
 	}
     
-    public NaplatnaStanica getNaplatnaStanicaForUser() {
+    public NaplatnaStanica getNaplatnaStanicaForOperater() {
     	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
     		if (ns.getListaNaplatnihMesta() != null) {
     			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
@@ -84,7 +84,19 @@ public class Korisnik implements Serializable {
     	return null;
     }
     
-    public NaplatnoMesto getNaplatnoMestoForUser() {
+    public NaplatnaStanica getNaplatnaStanicaForSef() {
+    	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+    		if (ns.getSef() != null) {
+				if (this.equals(ns.getSef())) {
+					return ns;
+    			}
+    		}
+			
+		}
+    	return null;
+    }
+    
+    public NaplatnoMesto getNaplatnoMestoForOperater() {
     	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
     		if (ns.getListaNaplatnihMesta() != null) {
     			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
@@ -97,5 +109,13 @@ public class Korisnik implements Serializable {
 		}
     	return null;
     }
+
+	@Override
+	public String toString() {
+		return "Korisnik [vrsta=" + vrsta + ", korisnickoIme=" + korisnickoIme
+				+ ", lozinka=" + lozinka + "]";
+	}
+    
+    
     
 	}
