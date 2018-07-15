@@ -87,22 +87,28 @@ public class MainWindow extends JFrame {
 		this.add(prviPanel);
 		JRadioButton ONDugme = new JRadioButton("Obicna naplata");
 		JRadioButton ENDugme = new JRadioButton("Elektronska naplata");
+		JButton x = new JButton("X");
 		ONDugme.setFont(krupanFont);
 		ENDugme.setFont(krupanFont);
+		x.setFont(krupanFont);
 		
 		ButtonGroup grupa = new ButtonGroup();
 		grupa.add(ONDugme);
 		grupa.add(ENDugme);
+		grupa.add(x);
 		
 		prviPanel.add(ONDugme);
 		prviPanel.add(ENDugme);
 		
-		JButton x = new JButton("X");
+
 		x.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForUser();
-				nm.setStanjeNaplate(new NeRadi());
-				nm.setAktivno(false);
+				if (nm != null) {
+					nm.setStanjeNaplate(new NeRadi());
+					nm.setAktivno(false);
+				}
+				
 			}
 		});
 		prviPanel.add(x);
@@ -266,6 +272,7 @@ public class MainWindow extends JFrame {
 				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForUser();
 				
 				JButton dugmeSkeniraj = new JButton("Skeniraj");
+				dugmeSkeniraj.setFont(krupanFont);
 				panel.add(dugmeSkeniraj);
 				dugmeSkeniraj.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -367,7 +374,16 @@ public class MainWindow extends JFrame {
 						if(naziv != null) {
 							NaplatnaStanica ns = new NaplatnaStanica(naziv);
 							success = true;
-							Aplikacija.getInstance().dodajNaplatnuStanicu(ns);
+							for (NaplatnaStanica naps : Aplikacija.getInstance().listaNaplatnihStanica) {
+								if (naps.getNazivStanice().equals(naziv)) {
+									success = false;
+									break;
+								}
+							}
+							if (success) {
+								Aplikacija.getInstance().dodajNaplatnuStanicu(ns);
+							}
+
 						}
 						
 						if (success) {
@@ -720,13 +736,18 @@ public class MainWindow extends JFrame {
 				panel.add(button);
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
-						final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja);
-						if(PoDatumuDugme.isSelected()) {
-							MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+						if (aktivanKorisnik.getNaplatnaStanicaForUser() != null && aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja != null) {
+							final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja);
+							if(PoDatumuDugme.isSelected()) {
+								MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+							}
+							if(PoVrstiVozilaDugme.isSelected()) {
+								MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+							}
+
 						}
-						if(PoVrstiVozilaDugme.isSelected()) {
-							MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+						else {
+							JOptionPane.showMessageDialog(null, "Nema izvestaja za prikaz.");
 						}
 						
 					}

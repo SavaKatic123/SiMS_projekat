@@ -72,22 +72,28 @@ public class Korisnik implements Serializable {
     
     public NaplatnaStanica getNaplatnaStanicaForUser() {
     	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
-			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
-				if (this.equals(nm.getOperater())) {
-					return ns;
-				}
-			}
+    		if (ns.getListaNaplatnihMesta() != null) {
+    			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
+    				if (this.equals(nm.getOperater())) {
+    					return ns;
+    				}
+    			}
+    		}
+			
 		}
     	return null;
     }
     
     public NaplatnoMesto getNaplatnoMestoForUser() {
     	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
-			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
-				if (this.equals(nm.getOperater())) {
-					return nm;
-				}
-			}
+    		if (ns.getListaNaplatnihMesta() != null) {
+    			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
+    				if (nm.getOperater() != null && this.equals(nm.getOperater())) {
+    					return nm;
+    				}
+    			}
+    		}
+			
 		}
     	return null;
     }

@@ -24,9 +24,11 @@ public class Main {
 		Korisnik aktivan = Utility.logIn();
 		
 		if (aktivan != null) {
+			/*
 			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
 				System.out.println(ns);
 			}
+			*/
 			Izvestaj.inicirajIzvestaj();
 			MainWindow w = new MainWindow(aktivan.getVrsta().toString(), aktivan);
 		}

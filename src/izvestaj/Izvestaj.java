@@ -45,12 +45,15 @@ public class Izvestaj implements Serializable {
 		boolean postoji = false;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
-			for(Izvestaj i: ns.listaIzvestaja) {
-				if (sdf.format(now).equals(sdf.format(i.getVreme()))) {
-					postoji = true;
-					break;
+			if (ns.listaIzvestaja != null) {
+				for(Izvestaj i: ns.listaIzvestaja) {
+					if (sdf.format(now).equals(sdf.format(i.getVreme()))) {
+						postoji = true;
+						break;
+					}
 				}
 			}
+			
 		}
 		Izvestaj izv = new Izvestaj(now);
 		for(int i = 0; i < 5; i++) {
@@ -58,8 +61,12 @@ public class Izvestaj implements Serializable {
 			izv.poDatumu.add(izp);
 		}
 		if (!postoji) {
+			
 			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
-				ns.listaIzvestaja.add(izv);
+				if (ns.listaIzvestaja != null) {
+					ns.listaIzvestaja.add(izv);
+				}
+				
 			}
 		}
 	}
