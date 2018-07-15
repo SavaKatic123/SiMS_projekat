@@ -1,38 +1,50 @@
 package gui;
 
+import izvestaj.FilterIzvestaja;
+import izvestaj.Izvestaj;
+import izvestaj.IzvestajPoDatumu;
+
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.JWindow;
 
+import main.Aplikacija;
 import main.Main;
 import model.Korisnik;
+import model.Naplata;
+import model.NaplatnaStanica;
+import model.NaplatnoMesto;
 import model.Rampa;
+import states.NeRadi;
 import states.RampaSeDize;
+import utility.Utility;
+import enumTypes.VrstaPerioda;
+import enumTypes.VrstaVozila;
 
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {
 	final Font krupanFont = new Font("Serif", Font.BOLD, 40);
 	final Font vrloKrupanFont = new Font("Serif", Font.BOLD, 60);
+	Korisnik aktivanKorisnik = new Korisnik();
 	public MainWindow(String title, Korisnik k) {
 		super(title);
-		 
+		aktivanKorisnik = k;
 		this.setVisible(true);
 
 		this.setSize(1000,700);
@@ -53,7 +65,7 @@ public class MainWindow extends JFrame {
             }
         });
         
-		switch(k.getVrsta()) {
+		switch(aktivanKorisnik.getVrsta()) {
 		case Operater:
 			this.prikaziMenuOperatera();
 			break;
@@ -85,6 +97,16 @@ public class MainWindow extends JFrame {
 		prviPanel.add(ONDugme);
 		prviPanel.add(ENDugme);
 		
+		JButton x = new JButton("X");
+		x.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForUser();
+				nm.setStanjeNaplate(new NeRadi());
+				nm.setAktivno(false);
+			}
+		});
+		prviPanel.add(x);
+		
 		ActionListener ONAL = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFrame Prozor = new JFrame("Obicna naplata");
@@ -108,7 +130,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -125,7 +147,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labelaCena);
 				
-				JTextField unosPoljeCena = new JTextField(20);
+				final JTextField unosPoljeCena = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 2;
 		        cs.gridwidth = 2;	
@@ -133,7 +155,17 @@ public class MainWindow extends JFrame {
 		        unosPoljeCena.setFont(vrloKrupanFont);
 				panel.add(unosPoljeCena);
 				
-		        
+				JLabel labelaVrsta = new JLabel("Vrsta vozila: ");
+				labelaVrsta.setFont(krupanFont);
+				panel.add(labelaVrsta);
+				final JTextField unosPoljeVrsta = new JTextField(20);
+				cs.gridx = 1;
+				cs.gridy = 3;
+				cs.gridwidth = 2;
+				
+				unosPoljeVrsta.setFont(vrloKrupanFont);
+		        panel.add(unosPoljeVrsta);
+				
 				JButton button = new JButton("Pokreni rampu");
 				button.setFont(krupanFont);
 				cs.gridx = 0;
@@ -142,24 +174,48 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(button);
 				
+				final NaplatnaStanica naplatnaStanica = aktivanKorisnik.getNaplatnaStanicaForUser();
+				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForUser();
+				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						final Rampa r = new Rampa();
+						if(!unosPolje.getText().trim().equals("") && !unosPoljeVrsta.getText().trim().equals("") && !unosPoljeCena.getText().trim().equals("")) {
+							final Rampa r = naplatnoMesto.getRampa();
 
-				        boolean first = true;
-				        
-						while (true) {
-							r.getStanje().entry();
-							r.getStanje().execute();
-							r.getStanje().exit();
-							r.setStanje(r.getStanje().getSledeceStanje());
-							if (r.getStanje().getClass().isInstance(new RampaSeDize()) && !first) {
-								break;
+					        boolean first = true;
+					        
+							while (true) {
+								r.getStanje().entry();
+								r.getStanje().execute();
+								r.getStanje().exit();
+								r.setStanje(r.getStanje().getSledeceStanje());
+								if (r.getStanje().getClass().isInstance(new RampaSeDize()) && !first) {
+									break;
+								}
+								first = false;
 							}
-							first = false;
-						}
-						JOptionPane.showMessageDialog(null, "Rampa spustena, vozac prosao.");
-						
+							JOptionPane.showMessageDialog(null, "Rampa spustena, vozac prosao.");
+							Naplata naplata = new Naplata(unosPolje.getText(), Double.parseDouble(unosPoljeCena.getText().trim()), VrstaVozila.fromString(unosPoljeVrsta.getText().trim()));
+							naplatnoMesto.dodajNaplatu(naplata);
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/mm");
+							
+							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
+								if(sdf.format(i.getVreme()).equals(sdf.format(new Date()))) {
+									for(IzvestajPoDatumu ipd: i.getPoDatumu()) {
+										if(ipd.getVrstaVozila().equals(VrstaVozila.fromString(unosPoljeVrsta.getText().trim()))) {
+											ipd.setPlacenIznos(Double.parseDouble(unosPoljeCena.getText().trim()) + ipd.getPlacenIznos());
+											ipd.setBrojVozila(ipd.getBrojVozila() + 1);
+										}
+									}
+								}
+							}
+							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
+								System.out.println(i);
+							}
+							Utility.upisi();
+						} else {
+							JOptionPane.showMessageDialog(null, "Potrebno popuniti sva obavezna polja!", "Error", JOptionPane.ERROR_MESSAGE);
+						}						
 					}
 				});
 				
@@ -190,7 +246,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -198,26 +254,41 @@ public class MainWindow extends JFrame {
 		        unosPolje.setFont(vrloKrupanFont);
 				panel.add(unosPolje);
 				
+				JLabel labelaVrsta = new JLabel("Vrsta vozila: ");
+				labelaVrsta.setFont(krupanFont);
+				panel.add(labelaVrsta);
+				final JTextField unosPoljeVrsta = new JTextField(20);
+				cs.gridx = 1;
+				cs.gridy = 3;
+				cs.gridwidth = 2;
+				panel.add(unosPoljeVrsta);
+
+				final NaplatnoMesto naplatnoMesto = aktivanKorisnik.getNaplatnoMestoForUser();
+				
 				JButton dugmeSkeniraj = new JButton("Skeniraj");
 				panel.add(dugmeSkeniraj);
 				dugmeSkeniraj.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						final Rampa r = new Rampa();
+						if(!unosPolje.getText().trim().equals("") && !unosPoljeVrsta.getText().trim().equals("")) {
+							final Rampa r = naplatnoMesto.getRampa();
 
-				        boolean first = true;
-				        
-						while (true) {
-							r.getStanje().entry();
-							r.getStanje().execute();
-							r.getStanje().exit();
-							r.setStanje(r.getStanje().getSledeceStanje());
-							if (r.getStanje().getClass().isInstance(new RampaSeDize()) && !first) {
-								break;
+					        boolean first = true;
+					        
+							while (true) {
+								r.getStanje().entry();
+								r.getStanje().execute();
+								r.getStanje().exit();
+								r.setStanje(r.getStanje().getSledeceStanje());
+								if (r.getStanje().getClass().isInstance(new RampaSeDize()) && !first) {
+									break;
+								}
+								first = false;
 							}
-							first = false;
+							JOptionPane.showMessageDialog(null, "Tag uspesno ocitan, naplata izvrsena, rampa spustena, vozac prosao.");
+							
+						} else {
+							JOptionPane.showMessageDialog(null, "Potrebno popuniti sva obavezna polja!", "Error", JOptionPane.ERROR_MESSAGE);
 						}
-						JOptionPane.showMessageDialog(null, "Tag uspesno ocitan, naplata izvrsena, rampa spustena, vozac prosao.");
-						
 					}
 				});
 				
@@ -273,7 +344,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -291,14 +362,17 @@ public class MainWindow extends JFrame {
 				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						boolean success = true;
-						/* TODO: treba da se prikaze novi prozor, na kom ce
-						 * moci da se unose atributi naplatne stanice koja
-						 * se kreira.
-						 * Korisnika obavestiti o uspesnosti kreiranja.
-						 */
+						boolean success = false;
+						String naziv = unosPolje.getText().trim();
+						if(naziv != null) {
+							NaplatnaStanica ns = new NaplatnaStanica(naziv);
+							success = true;
+							Aplikacija.getInstance().dodajNaplatnuStanicu(ns);
+						}
+						
 						if (success) {
-							
+							Utility.upisi();
+							JOptionPane.showMessageDialog(null, "Naplatna stanica dodata.");
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom vec postoji!");
@@ -336,7 +410,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -354,18 +428,23 @@ public class MainWindow extends JFrame {
 				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						boolean success = true;
-						/* TODO:  Treba prikazati novi prozor, u kome mogu da 
-						 * se menjaju atributi naplatne stanice.
-						 * Ime naplatne stanice ne moze da se menja.
-						 * Nakon izmene, azurirati listu naplatnih stanica
-						 * i ponovo je upisati u fajl.
-						 * Korisnika dijalogom obavestiti o uspesnosti
-						 * izmene.
-						 */
+						boolean success = false;
+						String naziv = unosPolje.getText().trim();
+						if(naziv != null) {
+							for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+								if(ns.getNazivStanice().equals(naziv)) {
+									String text = JOptionPane.showInputDialog(null, "Unesi novi naziv:");
+									if(text != null) {
+										ns.setNazivStanice(text);
+										success = true;
+									}
+								}
+							}
+						}
+						
 						if (success) {
-							
-							
+							Utility.upisi();
+							JOptionPane.showMessageDialog(null, "Naplatna stanica promenjena.");
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom ne postoji.");
@@ -401,7 +480,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -420,14 +499,21 @@ public class MainWindow extends JFrame {
 				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						boolean success = true;
-						/* TODO: Treba pronaci naplatnu stanicu sa unesenim 
-						 * nazivom u listi naplatnih stanica i izbrisati je.
-						 * Zatim, ponovo upisati listu u fajl.
-						 */
+						boolean success = false;
+						String naziv = unosPolje.getText().trim();
+						if(naziv != null) {
+							NaplatnaStanica stanica = null;
+							for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+								if(ns.getNazivStanice().equals(naziv)) {
+									stanica = ns;
+									success = true;
+								}
+							}
+							Aplikacija.getInstance().listaNaplatnihStanica.remove(stanica);
+						}
 						if (success) {
-							
-							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom uspesno obrisana.");
+							Utility.upisi();
+							JOptionPane.showMessageDialog(null, "Naplatna stanica obrisana.");
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom ne postoji.");
@@ -451,7 +537,7 @@ public class MainWindow extends JFrame {
 		JPanel prviPanel = new JPanel();
 		this.add(prviPanel);
 		JRadioButton UnosDugme = new JRadioButton("Unos podataka o naplatnoj stanici");
-		JRadioButton IzmenaDugme = new JRadioButton("Izmena cena na deonicama naplatne stanice");
+		JRadioButton IzmenaDugme = new JRadioButton("Izmena naplatne stanice");
 		JRadioButton IzvestajiDugme = new JRadioButton("Gledanje izvestaja naplatne stanice");
 		UnosDugme.setFont(krupanFont);
 		IzmenaDugme.setFont(krupanFont);
@@ -490,7 +576,7 @@ public class MainWindow extends JFrame {
 		        
 				panel.add(labela);
 				
-				JTextField unosPolje = new JTextField(20);
+				final JTextField unosPolje = new JTextField(20);
 				cs.gridx = 1;
 		        cs.gridy = 1;
 		        cs.gridwidth = 2;	
@@ -509,22 +595,22 @@ public class MainWindow extends JFrame {
 				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						boolean success = true;
-						/* TODO: Treba proveriti da li naplatna stanica sa
-						 * unesenim nazivom vec postoji. Ako ne postoji,
-						 * napraviti naplatnu stanicu u skladu sa vrednostima
-						 * i dodati je u listu naplatnih stanica.
-						 * Listu naplatnih stanica upisati u fajl.
-						 * Korisnika obavestiti o uspesnosti kreiranja naplatne
-						 * stanice.
-						 */
+						boolean success = false;
+						String naziv = unosPolje.getText().trim();
+						if(naziv != null) {
+							NaplatnaStanica ns = new NaplatnaStanica(naziv);
+							success = true;
+							Aplikacija.getInstance().dodajNaplatnuStanicu(ns);
+						}
+						
 						if (success) {
-							
-							
+							Utility.upisi();
+							JOptionPane.showMessageDialog(null, "Naplatna stanica dodata.");
 						}
 						else {
-							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom vec postoji.");
+							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom vec postoji!");
 						}
+	
 						
 						
 					}
@@ -548,7 +634,25 @@ public class MainWindow extends JFrame {
 				GridBagConstraints cs = new GridBagConstraints();
 		        
 		        cs.fill = GridBagConstraints.HORIZONTAL;
+		        
+		        JLabel labela = new JLabel("Unesite naziv naplatne stanice: ");
+				labela.setFont(krupanFont);
 				
+				cs.gridx = 0;
+		        cs.gridy = 1;
+		        cs.gridwidth = 1;
+		        
+				panel.add(labela);
+				
+				final JTextField unosPolje = new JTextField(20);
+				cs.gridx = 1;
+		        cs.gridy = 1;
+		        cs.gridwidth = 2;	
+				
+		        unosPolje.setFont(vrloKrupanFont);
+				panel.add(unosPolje);
+				
+		        
 				JButton button = new JButton("Izmeni");
 				button.setFont(krupanFont);
 				cs.gridx = 0;
@@ -559,18 +663,23 @@ public class MainWindow extends JFrame {
 				
 				button.addActionListener (new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						boolean success = true;
-						/* TODO:  Treba prikazati novi prozor, u kome mogu da 
-						 * se menjaju atributi naplatne stanice.
-						 * Ime naplatne stanice ne moze da se menja.
-						 * Nakon izmene, azurirati listu naplatnih stanica
-						 * i ponovo je upisati u fajl.
-						 * Korisnika dijalogom obavestiti o uspesnosti
-						 * izmene.
-						 */
+						boolean success = false;
+						String naziv = unosPolje.getText().trim();
+						if(naziv != null) {
+							for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+								if(ns.getNazivStanice().equals(naziv)) {
+									String text = JOptionPane.showInputDialog(null, "Unesi novi naziv:");
+									if(text != null) {
+										ns.setNazivStanice(text);
+										success = true;
+									}
+								}
+							}
+						}
+						
 						if (success) {
-							
-							
+							Utility.upisi();
+							JOptionPane.showMessageDialog(null, "Naplatna stanica promenjena.");
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Naplatna stanica sa unesenim nazivom ne postoji.");
@@ -598,28 +707,30 @@ public class MainWindow extends JFrame {
 		        
 		        cs.fill = GridBagConstraints.HORIZONTAL;
 		        
-				JRadioButton PoDatumuDugme = new JRadioButton("Po datumu");
-				JRadioButton PoNaplacenomIznosuDugme = new JRadioButton("Po naplacenom iznosu");
-				JRadioButton PoPerioduDugme = new JRadioButton("Po periodu");
-				JRadioButton PoVrstiVozilaDugme = new JRadioButton("Po vrsti vozila");
+				final JRadioButton PoDatumuDugme = new JRadioButton("Po datumu");
+				final JRadioButton PoVrstiVozilaDugme = new JRadioButton("Po vrsti vozila");
 				
 				PoDatumuDugme.setFont(krupanFont);
-				PoNaplacenomIznosuDugme.setFont(krupanFont);
-				PoPerioduDugme.setFont(krupanFont);
 				PoVrstiVozilaDugme.setFont(krupanFont);
 				
-				ButtonGroup grupa = new ButtonGroup();
-				grupa.add(PoDatumuDugme);
-				grupa.add(PoNaplacenomIznosuDugme);
-				grupa.add(PoPerioduDugme);
-				grupa.add(PoVrstiVozilaDugme);
-				
 				panel.add(PoDatumuDugme);
-				panel.add(PoNaplacenomIznosuDugme);
-				panel.add(PoPerioduDugme);
 				panel.add(PoVrstiVozilaDugme);
 				
-		        // TODO: prikazati sve izvestaje po odabranom kriterijumu korisniku na novom prozoru
+				JButton button = new JButton("Izaberi");
+				panel.add(button);
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForUser().listaIzvestaja);
+						if(PoDatumuDugme.isSelected()) {
+							MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+						}
+						if(PoVrstiVozilaDugme.isSelected()) {
+							MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+						}
+						
+					}
+				});
 			}
 		};
 
@@ -633,6 +744,8 @@ public class MainWindow extends JFrame {
 		JPanel prviPanel = new JPanel();
 		this.add(prviPanel);
 		JRadioButton IzvestajiDugme = new JRadioButton("Gledanje svih izvestaja");
+		IzvestajiDugme.setFont(krupanFont);
+		
 		prviPanel.add(IzvestajiDugme);
 
 		ActionListener IzvestajiAL = new ActionListener() {
@@ -647,32 +760,37 @@ public class MainWindow extends JFrame {
 				
 				GridBagConstraints cs = new GridBagConstraints();
 		        
-		        cs.fill = GridBagConstraints.HORIZONTAL;
-				
-		        JRadioButton PoDatumuDugme = new JRadioButton("Po datumu");
-				JRadioButton PoNaplacenomIznosuDugme = new JRadioButton("Po naplacenom iznosu");
-				JRadioButton PoPerioduDugme = new JRadioButton("Po periodu");
-				JRadioButton PoVrstiVozilaDugme = new JRadioButton("Po vrsti vozila");
+				cs.fill = GridBagConstraints.HORIZONTAL;
+		        
+				final JRadioButton PoDatumuDugme = new JRadioButton("Po datumu");
+				final JRadioButton PoVrstiVozilaDugme = new JRadioButton("Po vrsti vozila");
 				
 				PoDatumuDugme.setFont(krupanFont);
-				PoNaplacenomIznosuDugme.setFont(krupanFont);
-				PoPerioduDugme.setFont(krupanFont);
 				PoVrstiVozilaDugme.setFont(krupanFont);
 				
-				ButtonGroup grupa = new ButtonGroup();
-				grupa.add(PoDatumuDugme);
-				grupa.add(PoNaplacenomIznosuDugme);
-				grupa.add(PoPerioduDugme);
-				grupa.add(PoVrstiVozilaDugme);
-				
 				panel.add(PoDatumuDugme);
-				panel.add(PoNaplacenomIznosuDugme);
-				panel.add(PoPerioduDugme);
 				panel.add(PoVrstiVozilaDugme);
-		        
-		        /* TODO: prikazati izvestaje naplatne stanice po odabranom 
-		         * kriterijumu korisniku na novom prozoru
-				*/
+				JButton button = new JButton("Izaberi");
+				panel.add(button);
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						int brojVozila = 0;
+						double iznos = 0;
+						for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+							final FilterIzvestaja f = new FilterIzvestaja(ns.listaIzvestaja);
+							if(PoDatumuDugme.isSelected()) {
+								MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+							}
+							if(PoVrstiVozilaDugme.isSelected()) {
+								MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+							}
+							
+						}
+
+						RezultatIzvestaja dlg = new RezultatIzvestaja(new JFrame("Rezultat"), brojVozila, iznos);
+						dlg.setVisible(true);
+					}
+				});
 			}
 		};
 

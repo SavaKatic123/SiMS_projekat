@@ -1,16 +1,21 @@
 package main;
 
 import gui.MainWindow;
+import izvestaj.Izvestaj;
 import model.Korisnik;
+import model.NaplatnaStanica;
 import utility.Utility;
 
 public class Main {
 
 	public static void main(String[] args) {
 		Aplikacija.getInstance();
-		
 		Utility.ucitajKorisnike();
+		//Utility.ucitajDeonice();
+		//Utility.kreirajFajlove();
+		Utility.ucitaj();
 		start();
+		
 		
 		
 	}
@@ -19,8 +24,10 @@ public class Main {
 		Korisnik aktivan = Utility.logIn();
 		
 		if (aktivan != null) {
-			Utility.ucitaj();
-			
+			for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+				System.out.println(ns);
+			}
+			Izvestaj.inicirajIzvestaj();
 			MainWindow w = new MainWindow(aktivan.getVrsta().toString(), aktivan);
 		}
 		else {

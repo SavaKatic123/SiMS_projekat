@@ -1,6 +1,8 @@
 package enumTypes;
 
-public enum VrstaPerioda {
+import java.io.Serializable;
+
+public enum VrstaPerioda implements Serializable {
 	PoDanu,
 	PoMesecu,
 	PoGodini;

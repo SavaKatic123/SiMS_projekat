@@ -1,8 +1,11 @@
 package izvestaj;
 
+import java.io.Serializable;
+
 import enumTypes.VrstaVozila;
 
-public class IzvestajPoDatumu {
+@SuppressWarnings("serial")
+public class IzvestajPoDatumu implements Serializable {
 	private VrstaVozila vrstaVozila;
 	private double placenIznos;
 	private int brojVozila;

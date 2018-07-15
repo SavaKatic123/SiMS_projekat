@@ -14,6 +14,15 @@ public abstract class NaplatnoMesto implements Serializable {
 	protected ArrayList<Naplata> listaNaplata;
 	protected Rampa rampa;
 	protected StanjeNaplatnogMesta stanjeNaplate;
+	protected Korisnik operater;
+	
+	
+	public Korisnik getOperater() {
+		return operater;
+	}
+	public void setOperater(Korisnik operater) {
+		this.operater = operater;
+	}
 	public boolean isAktivno() {
 		return aktivno;
 	}
@@ -61,14 +70,18 @@ public abstract class NaplatnoMesto implements Serializable {
 		this.stanjeNaplate = new Radi();
 		this.listaKvarova = new ArrayList<Kvar>();
 		this.listaNaplata = new ArrayList<Naplata>();
+		this.operater = new Korisnik();
 	}
 	@Override
 	public String toString() {
 		return "NaplatnoMesto [aktivno=" + aktivno + ", id=" + id
 				+ ", listaKvarova=" + listaKvarova + ", listaNaplata="
 				+ listaNaplata + ", rampa=" + rampa + ", stanjeNaplate="
-				+ stanjeNaplate + "]";
+				+ stanjeNaplate + ", operater=" + operater + "]";
 	}
 	
+	public void dodajNaplatu(Naplata naplata) {
+		this.listaNaplata.add(naplata);
+	}
 	
 }

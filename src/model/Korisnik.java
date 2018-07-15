@@ -1,8 +1,12 @@
 package model;
 
+import java.io.Serializable;
+
+import main.Aplikacija;
 import enumTypes.VrstaKorisnika;
 
-public class Korisnik {
+@SuppressWarnings("serial")
+public class Korisnik implements Serializable {
     private VrstaKorisnika vrsta;
    
     private String korisnickoIme;
@@ -49,6 +53,43 @@ public class Korisnik {
    
     public void unesiPodatke() {
       // TODO: implement
+    }
+
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Korisnik))
+			return false;
+		Korisnik other = (Korisnik) obj;
+		if (korisnickoIme.equals(other.getKorisnickoIme()) && lozinka.equals(other.getLozinka())) {
+			return true;
+		}
+		return false;
+	}
+    
+    public NaplatnaStanica getNaplatnaStanicaForUser() {
+    	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
+				if (this.equals(nm.getOperater())) {
+					return ns;
+				}
+			}
+		}
+    	return null;
+    }
+    
+    public NaplatnoMesto getNaplatnoMestoForUser() {
+    	for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
+			for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
+				if (this.equals(nm.getOperater())) {
+					return nm;
+				}
+			}
+		}
+    	return null;
     }
     
 	}

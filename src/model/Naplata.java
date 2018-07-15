@@ -42,4 +42,5 @@ public class Naplata implements Serializable {
 	
 	
 	
+	
 }

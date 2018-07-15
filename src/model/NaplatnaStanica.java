@@ -25,16 +25,30 @@ public class NaplatnaStanica implements Serializable {
 	public void setListaNaplatnihMesta(ArrayList<NaplatnoMesto> listaNaplatnihMesta) {
 		this.listaNaplatnihMesta = listaNaplatnihMesta;
 	}
+	
+	
 
+	public ArrayList<Izvestaj> getListaIzvestaja() {
+		return listaIzvestaja;
+	}
+	public void setListaIzvestaja(ArrayList<Izvestaj> listaIzvestaja) {
+		this.listaIzvestaja = listaIzvestaja;
+	}
 	public NaplatnaStanica(String nazivStanice) {
+		this.nazivStanice = nazivStanice;
+	}
+	public NaplatnaStanica(String nazivStanice, int idx, Korisnik k) {
 		super();
 		this.nazivStanice = nazivStanice;
+		MestoObicneNaplate m = new MestoObicneNaplate(true, idx, new Rampa());
+		if(idx == 1) {
+			m.setOperater(k);
+		}
 		this.listaNaplatnihMesta = new ArrayList<NaplatnoMesto>(Arrays.asList(
-				new MestoElektronskeNaplate(true, 1, new Rampa()),
-				new MestoElektronskeNaplate(true, 2, new Rampa()),
-				new MestoObicneNaplate(true, 3, new Rampa()),
-				new MestoObicneNaplate(true, 4, new Rampa()),
-				new MestoObicneNaplate(true, 5, new Rampa())));
+				m,
+				new MestoElektronskeNaplate(true, idx + 1, new Rampa()),
+				new MestoElektronskeNaplate(true, idx + 2, new Rampa()),
+				new MestoObicneNaplate(true, idx + 3, new Rampa())));
 		this.listaIzvestaja = new ArrayList<Izvestaj>();
 	}
 	@Override

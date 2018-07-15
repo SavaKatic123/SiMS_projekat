@@ -1,6 +1,8 @@
 package enumTypes;
 
-public enum VrstaKorisnika {
+import java.io.Serializable;
+
+public enum VrstaKorisnika implements Serializable {
 	Administrator,
 	Operater,
 	SefNaplatneStanice,

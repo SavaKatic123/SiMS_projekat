@@ -1,6 +1,8 @@
 package enumTypes;
 
-public enum VrstaKvara {
+import java.io.Serializable;
+
+public enum VrstaKvara implements Serializable {
 	Kritican,
 	Nekritican;
 	

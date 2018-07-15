@@ -1,6 +1,8 @@
 package enumTypes;
 
-public enum VrstaVozila {
+import java.io.Serializable;
+
+public enum VrstaVozila implements Serializable {
 	Ia,
 	I,
 	II,
