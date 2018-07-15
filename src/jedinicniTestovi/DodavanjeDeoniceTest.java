@@ -23,7 +23,7 @@ public class DodavanjeDeoniceTest {
 		Utility.ucitaj();
 		Deonica d = new Deonica(Aplikacija.getInstance().listaNaplatnihStanica.get(1), Aplikacija.getInstance().listaNaplatnihStanica.get(7), null);
 		deonice = (ArrayList<Deonica>) Aplikacija.getInstance().listaDeonica.clone();
-		Aplikacija.getInstance().listaDeonica.add(d);
+		Aplikacija.getInstance().dodajDeonicu(d);
 	}
 	
 	@Test
