@@ -10,7 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -31,9 +30,9 @@ import model.NaplatnaStanica;
 import model.NaplatnoMesto;
 import model.Rampa;
 import states.NeRadi;
+import states.Radi;
 import states.RampaSeDize;
 import utility.Utility;
-import enumTypes.VrstaPerioda;
 import enumTypes.VrstaVozila;
 
 
@@ -87,7 +86,7 @@ public class MainWindow extends JFrame {
 		this.add(prviPanel);
 		JRadioButton ONDugme = new JRadioButton("Obicna naplata");
 		JRadioButton ENDugme = new JRadioButton("Elektronska naplata");
-		JButton x = new JButton("X");
+		JButton x = new JButton("Deaktiviraj");
 		ONDugme.setFont(krupanFont);
 		ENDugme.setFont(krupanFont);
 		x.setFont(krupanFont);
@@ -96,12 +95,24 @@ public class MainWindow extends JFrame {
 		grupa.add(ONDugme);
 		grupa.add(ENDugme);
 		grupa.add(x);
-		
-		NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForOperater();
+
+		final NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForOperater();
+
 		if(nm != null && !nm.isAktivno()) {
 			JLabel labela = new JLabel("MESTO NEAKTIVNO");
 			labela.setFont(vrloKrupanFont);
 			prviPanel.add(labela);
+			JButton aktiviraj = new JButton("Aktiviraj");
+			aktiviraj.setFont(krupanFont);
+			prviPanel.add(aktiviraj);
+			aktiviraj.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					nm.setStanjeNaplate(new Radi());
+					nm.setAktivno(true);
+					Utility.upisi();
+					System.exit(0);
+				}
+			});
 		} else {
 			prviPanel.add(ONDugme);
 			prviPanel.add(ENDugme);
@@ -111,7 +122,6 @@ public class MainWindow extends JFrame {
 
 		x.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NaplatnoMesto nm = aktivanKorisnik.getNaplatnoMestoForOperater();
 				if (nm != null) {
 					nm.setStanjeNaplate(new NeRadi());
 					nm.setAktivno(false);
