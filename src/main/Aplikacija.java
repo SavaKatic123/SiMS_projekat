@@ -38,12 +38,23 @@ public class Aplikacija {
 	}
 	
 	public void izmeniKorisnika(Korisnik k) {
-		//TODO: Implement
+		for (int i = 0; i < listaKorisnika.size(); i++) {
+			if (k.getKorisnickoIme().equals(listaKorisnika.get(i).getKorisnickoIme())) {
+				
+				listaKorisnika.get(i).setLozinka(k.getLozinka());
+				listaKorisnika.get(i).setVrsta(k.getVrsta());
+			}
+		}
 		
 	}
 	
 	public void obrisiKorisnika(Korisnik k) {
-		//TODO: Implement
+		for (int i = 0; i < listaKorisnika.size(); i++) {
+			if (k.getKorisnickoIme().equals(listaKorisnika.get(i).getKorisnickoIme())) {
+				listaKorisnika.remove(i);
+			}
+			
+		}
 	}
 	
 	public void dodajDeonicu(Deonica d) {
@@ -69,4 +80,25 @@ public class Aplikacija {
 			listaNaplatnihStanica.add(ns);			
 		}
 	}
+	
+	public void obrisiNaplatnuStanicu(NaplatnaStanica ns) {
+		boolean pronadjena = false;
+		for (int i = 0; i < listaNaplatnihStanica.size(); i++) {
+			if (listaNaplatnihStanica.get(i).getNazivStanice().equals(ns.getNazivStanice())) {
+				listaNaplatnihStanica.remove(i);
+			}
+		}
+		
+	}
+	
+	public void izmenaNaplatneStanice(NaplatnaStanica ns) {
+		for (int i = 0; i < listaNaplatnihStanica.size(); i++) {
+			if (ns.getNazivStanice().equals(listaNaplatnihStanica.get(i).getNazivStanice())) {
+				listaNaplatnihStanica.get(i).setListaIzvestaja(ns.getListaIzvestaja());
+				listaNaplatnihStanica.get(i).setListaNaplatnihMesta(ns.getListaNaplatnihMesta());
+				listaNaplatnihStanica.get(i).setSef(ns.getSef());
+			}
+		}
+	}
+	
 }
