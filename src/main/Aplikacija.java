@@ -92,7 +92,6 @@ public class Aplikacija {
 	}
 	
 	public void obrisiNaplatnuStanicu(NaplatnaStanica ns) {
-		boolean pronadjena = false;
 		for (int i = 0; i < listaNaplatnihStanica.size(); i++) {
 			if (listaNaplatnihStanica.get(i).getNazivStanice().equals(ns.getNazivStanice())) {
 				listaNaplatnihStanica.remove(i);

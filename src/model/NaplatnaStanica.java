@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import main.Aplikacija;
-import enumTypes.VrstaKorisnika;
 
 @SuppressWarnings("serial")
 public class NaplatnaStanica implements Serializable {
@@ -45,6 +44,59 @@ public class NaplatnaStanica implements Serializable {
 	public NaplatnaStanica(String nazivStanice) {
 		this.nazivStanice = nazivStanice;
 	}
+	
+	public NaplatnaStanica() {
+		super();
+		listaNaplatnihMesta = new ArrayList<NaplatnoMesto>();
+		listaIzvestaja = new ArrayList<Izvestaj>();
+	}
+	@Override
+	public String toString() {
+		return "NaplatnaStanica [nazivStanice=" + nazivStanice + ", sef=" + sef
+				+ ", listaNaplatnihMesta=" + listaNaplatnihMesta
+				+ ", listaIzvestaja=" + listaIzvestaja + "]";
+	}
+	
+	
+	public void dodajNaplatnoMesto(NaplatnoMesto nm) {
+		boolean pronadjen = false;
+		for(NaplatnoMesto napm: listaNaplatnihMesta) {
+			if (napm.equals(nm)) {
+				pronadjen = true;
+			}
+		}
+		if (!pronadjen) {
+			listaNaplatnihMesta.add(nm);
+		}
+	}
+	
+	public void izmeniNaplatnoMesto(NaplatnoMesto nm) {
+		for (int i = 0; i < listaNaplatnihMesta.size(); i++) {
+			if (nm.equals(listaNaplatnihMesta.get(i))) {
+				listaNaplatnihMesta.get(i).setAktivno(nm.isAktivno());
+				listaNaplatnihMesta.get(i).setId(nm.getId());
+				listaNaplatnihMesta.get(i).setListaKvarova(nm.getListaKvarova());
+				listaNaplatnihMesta.get(i).setListaNaplata(nm.getListaNaplata());
+				listaNaplatnihMesta.get(i).setOperater(nm.getOperater());
+				listaNaplatnihMesta.get(i).setRampa(nm.getRampa());
+				listaNaplatnihMesta.get(i).setStanjeNaplate(nm.getStanjeNaplate());
+			}
+		}
+		
+		
+	}
+	
+	public void obrisiKorisnika(NaplatnoMesto nm) {
+		for (int i = 0; i < listaNaplatnihMesta.size(); i++) {
+			if (nm.equals(listaNaplatnihMesta.get(i))) {
+				listaNaplatnihMesta.remove(i);
+			}
+			
+		}
+	}
+	
+
+	//HELPER KONSTRUKTOR - obrisati kad vise nije potreban
 	public NaplatnaStanica(String nazivStanice, int idx, Korisnik k) {
 		super();
 		this.nazivStanice = nazivStanice;
@@ -66,22 +118,6 @@ public class NaplatnaStanica implements Serializable {
 				}
 			}
 		}
-	}
-	public NaplatnaStanica() {
-		super();
-		listaNaplatnihMesta = new ArrayList<NaplatnoMesto>();
-		listaIzvestaja = new ArrayList<Izvestaj>();
-	}
-	@Override
-	public String toString() {
-		return "NaplatnaStanica [nazivStanice=" + nazivStanice + ", sef=" + sef
-				+ ", listaNaplatnihMesta=" + listaNaplatnihMesta
-				+ ", listaIzvestaja=" + listaIzvestaja + "]";
-	}
-	
-	
-	public void dodajNaplatnoMesto(NaplatnoMesto nm) {
-		listaNaplatnihMesta.add(nm);
 	}
 	
 	

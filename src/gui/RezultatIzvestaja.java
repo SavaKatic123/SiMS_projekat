@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -20,6 +21,8 @@ public class RezultatIzvestaja extends JDialog {
 	public RezultatIzvestaja(Frame parent, int brojVozila, double iznos) {
 		super(parent, "Rezultat", true);
 		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
         GridBagConstraints cs = new GridBagConstraints();
  
         cs.fill = GridBagConstraints.HORIZONTAL;

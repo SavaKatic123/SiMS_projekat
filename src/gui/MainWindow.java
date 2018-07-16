@@ -5,14 +5,17 @@ import izvestaj.Izvestaj;
 import izvestaj.IzvestajPoDatumu;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +36,7 @@ import states.NeRadi;
 import states.Radi;
 import states.RampaSeDize;
 import utility.Utility;
+import enumTypes.VrstaPerioda;
 import enumTypes.VrstaVozila;
 
 
@@ -84,6 +88,8 @@ public class MainWindow extends JFrame {
 		
 		JPanel prviPanel = new JPanel();
 		this.add(prviPanel);
+		prviPanel.setLayout(new BoxLayout(prviPanel, BoxLayout.PAGE_AXIS));
+
 		JRadioButton ONDugme = new JRadioButton("Obicna naplata");
 		JRadioButton ENDugme = new JRadioButton("Elektronska naplata");
 		JButton x = new JButton("Deaktiviraj");
@@ -223,7 +229,6 @@ public class MainWindow extends JFrame {
 							Naplata naplata = new Naplata(unosPolje.getText(), Double.parseDouble(unosPoljeCena.getText().trim()), VrstaVozila.fromString(unosPoljeVrsta.getText().trim()));
 							naplatnoMesto.dodajNaplatu(naplata);
 							SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-							System.out.println(naplatnaStanica);
 							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
 								if(sdf.format(i.getVreme()).equals(sdf.format(new Date()))) {
 									for(IzvestajPoDatumu ipd: i.getPoDatumu()) {
@@ -234,13 +239,8 @@ public class MainWindow extends JFrame {
 									}
 								}
 							}
-							for(Izvestaj i: naplatnaStanica.getListaIzvestaja()) {
-								System.out.println(i);
-							}
-							for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
-								System.out.println(ns);
-							}
-							// Utility.upisi();
+							
+							Utility.upisi();
 						} else {
 							JOptionPane.showMessageDialog(null, "Potrebno popuniti sva obavezna polja!", "Error", JOptionPane.ERROR_MESSAGE);
 						}						
@@ -586,10 +586,29 @@ public class MainWindow extends JFrame {
 		grupa.add(IzmenaDugme);
 		grupa.add(IzvestajiDugme);
 		
+		
+		boolean imaNeaktivnog = false;
+		NaplatnaStanica ns = aktivanKorisnik.getNaplatnaStanicaForSef();
+		for(NaplatnoMesto nm: ns.getListaNaplatnihMesta()) {
+			if (!nm.isAktivno()) {
+				imaNeaktivnog = true;
+			}
+		}
+		JLabel status;
+		if(imaNeaktivnog) {
+			status = new JLabel("X");
+			status.setForeground(Color.RED);
+			status.setFont(vrloKrupanFont);
+		} else {
+			status = new JLabel("<-");
+			status.setForeground(Color.GREEN);
+			status.setFont(vrloKrupanFont);
+		}
+		prviPanel.setLayout(new BoxLayout(prviPanel, BoxLayout.PAGE_AXIS));
 		prviPanel.add(UnosDugme);
 		prviPanel.add(IzmenaDugme);
 		prviPanel.add(IzvestajiDugme);
-		
+		prviPanel.add(status);
 		
 		ActionListener UnosAL = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -761,12 +780,36 @@ public class MainWindow extends JFrame {
 						if (aktivanKorisnik.getNaplatnaStanicaForSef() != null && aktivanKorisnik.getNaplatnaStanicaForSef().listaIzvestaja != null) {
 							final FilterIzvestaja f = new FilterIzvestaja(aktivanKorisnik.getNaplatnaStanicaForSef().listaIzvestaja);
 							if(PoDatumuDugme.isSelected()) {
-								MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+								String vrsta = JOptionPane.showInputDialog(null, "Unesi kriterijum (PoDanu/PoMesecu/PoGodini):");
+								VrstaPerioda vp = VrstaPerioda.fromString(vrsta);
+								String text = JOptionPane.showInputDialog(null, "Unesi datum (dd/mm/yyyy):");
+								SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+								Date period = null;
+								try {
+									period = sdf.parse(text);
+								} catch (ParseException e1) {
+									e1.printStackTrace();
+								}
+								if(period != null && vp != null) {
+									f.filtrirajPoPeriodu(vp, period);
+								} else {
+									JOptionPane.showMessageDialog(null, "Filtriranje podataka neuspesno.", "Error", JOptionPane.ERROR_MESSAGE);
+									return;
+								}
 							}
 							if(PoVrstiVozilaDugme.isSelected()) {
-								MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+								String vrsta = JOptionPane.showInputDialog(null, "Unesi vrstu vozila (I, Ia, II, III, IV):");
+								VrstaVozila vv = VrstaVozila.fromString(vrsta);
+								if(vv != null) {
+									f.filtrirajPoVrstiVozila(vv);
+								} else {
+									JOptionPane.showMessageDialog(null, "Filtriranje podataka neuspesno.", "Error", JOptionPane.ERROR_MESSAGE);
+									return;
+								}
 							}
-
+							IzvestajPoDatumu ipd = f.izracunajFiltrirane();
+							RezultatIzvestaja dlg = new RezultatIzvestaja(new JFrame("Rezultat"), ipd.getBrojVozila(), ipd.getPlacenIznos());
+							dlg.setVisible(true);
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Nema izvestaja za prikaz.");
@@ -819,15 +862,49 @@ public class MainWindow extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						int brojVozila = 0;
 						double iznos = 0;
+						VrstaPerioda vp = null;
+						VrstaVozila vv = null;
+						Date period = null;
+						if(PoDatumuDugme.isSelected()) {
+							String vrsta = JOptionPane.showInputDialog(null, "Unesi kriterijum (PoDanu/PoMesecu/PoGodini):");
+							vp = VrstaPerioda.fromString(vrsta);
+							String text = JOptionPane.showInputDialog(null, "Unesi datum (dd/mm/yyyy):");
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+							period = null;
+							try {
+								period = sdf.parse(text);
+							} catch (ParseException e1) {
+								e1.printStackTrace();
+							}
+							if(period != null && vp != null) {
+							} else {
+								JOptionPane.showMessageDialog(null, "Filtriranje podataka neuspesno.", "Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						}
+						if(PoVrstiVozilaDugme.isSelected()) {
+							String vrsta = JOptionPane.showInputDialog(null, "Unesi vrstu vozila (I, Ia, II, III, IV):");
+							vv = VrstaVozila.fromString(vrsta);
+							if(vv != null) {
+								
+							} else {
+								JOptionPane.showMessageDialog(null, "Filtriranje podataka neuspesno.", "Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						}
 						for(NaplatnaStanica ns: Aplikacija.getInstance().listaNaplatnihStanica) {
 							final FilterIzvestaja f = new FilterIzvestaja(ns.listaIzvestaja);
+
 							if(PoDatumuDugme.isSelected()) {
-								MenuVrstePerioda menuP = new MenuVrstePerioda(f, PoVrstiVozilaDugme.isSelected());
+								f.filtrirajPoPeriodu(vp, period);
 							}
 							if(PoVrstiVozilaDugme.isSelected()) {
-								MenuVrsteVozila menuV = new MenuVrsteVozila(f);
+								f.filtrirajPoVrstiVozila(vv);
 							}
 							
+							IzvestajPoDatumu ipd = f.izracunajFiltrirane();
+							iznos += ipd.getPlacenIznos();
+							brojVozila += ipd.getBrojVozila();
 						}
 
 						RezultatIzvestaja dlg = new RezultatIzvestaja(new JFrame("Rezultat"), brojVozila, iznos);
